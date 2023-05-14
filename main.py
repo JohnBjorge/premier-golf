@@ -1,31 +1,17 @@
 from premier_golf_scraper import PremierGolfScraper
 from datetime import datetime, date, timedelta
-from multiprocessing import Process, Manager, Lock, freeze_support
+from multiprocessing import Process, Pool, Queue, Manager, Lock, freeze_support
 import json
+from data_aggregator import DataAggregator
 
-# Crossroads seems scuffed (same day only)
-# Interbay is 9 holes only
-# Ocean Shores also displays cart fee on first page
 
-def run_scraper(date_search, shared_dict, lock):
+def run_scraper(date_search, data_queue):
     pgs = PremierGolfScraper(date_search=date_search, course_search="Jackson Park")
     html = pgs.navigate_page()
     pgs.scrape(html)
-
-    lock.acquire()
-
-    tee_time_search = {}
-    tee_time_search["scrape_time"] = pgs.scrape_time
-    tee_time_search["date_search"] = pgs.date_search
-    tee_time_search["time_search"] = pgs.time_search
-    tee_time_search["course_search"] = pgs.course_search
-    tee_time_search["players_search"] = pgs.players_search
-    tee_time_search["hole_search"] = pgs.hole_search
-    tee_time_search["tee_times"] = pgs.tee_times
-
-    shared_dict["tee_times"] += [tee_time_search]
-
-    lock.release()
+    result = pgs.tee_time_summary_json()
+    pgs.quit()
+    data_queue.put(result)
 
 def get_dates_range(start_day: str = date.today(), end_day: str = date.today() + timedelta(14)) -> list:
     if start_day < date.today():
@@ -37,27 +23,23 @@ def get_dates_range(start_day: str = date.today(), end_day: str = date.today() +
 
     dates_list = []
     day_range = end_day - start_day
-    for day in range(day_range):
+    for day in range(day_range.days):
         dates_list.append(start_day + timedelta(days=day))
     return dates_list
 
 if __name__ == "__main__":
-    dates_list = get_dates_range()
+    start_day = date.today() + timedelta(days=1)
+    end_day = start_day + timedelta(days=2)
+    dates_list = get_dates_range(start_day, end_day)
 
-    freeze_support()
-
-    manager = Manager()
-    shared_dict = manager.dict()
-
-    shared_dict["tee_times"] = list()
-    lock = Lock()
+    data_queue = Queue()
 
     # create a list to hold the processes
     processes = []
 
     # start a new process for each URL
     for date in dates_list:
-        process = Process(target=run_scraper, args=(date, shared_dict, lock))
+        process = Process(target=run_scraper, args=(date, data_queue))
         process.start()
         processes.append(process)
 
@@ -65,33 +47,11 @@ if __name__ == "__main__":
     for process in processes:
         process.join()
 
-    tee_times = dict(shared_dict)
+    data_aggregator = DataAggregator()
+    for _ in range(len(dates_list)):
+        data_aggregator.add_data(data_queue.get())
 
-    with open("test.json", "w") as outfile:
-        json.dump(tee_times, outfile)
+    with open("./sample/test.json", "w") as outfile:
+        json.dump(data_aggregator.get_data(), outfile, indent=4)
 
 
-# {
-#     tee_times: [
-#         {
-#             scrape time:
-#             date_search:
-#             tee_time: [ {course,
-#                           time,
-#                           players,
-#                           price
-#                           },
-#             ]
-#         },
-#         {
-#             scrape time:
-#             date_search:
-#             tee_time: [ {course,
-#                           time,
-#                           players,
-#                           price
-#                           },
-#             ]
-#         }
-#     ]
-# }

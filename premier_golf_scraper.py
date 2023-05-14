@@ -36,6 +36,7 @@ class PremierGolfScraper:
         self.hole_search = hole_search
         self.scrape_time = None
         self.tee_times = []
+        self.tee_time_search = {}
 
     def navigate_page(self) -> str:
         # select date
@@ -144,13 +145,43 @@ class PremierGolfScraper:
 
         self.tee_times = tee_time_list
 
+        self.tee_time_search_summary()
+
+
+# {
+#     tee_times: [
+#         {
+#             scrape time:
+#             date_search:
+#             tee_time: [ {course,
+#                           time,
+#                           players,
+#                           price
+#                           },
+#             ]
+#         },
+#     ]
+# }
+    def tee_time_search_summary(self):
+        self.tee_time_search["scrape_time"] = self.scrape_time
+        self.tee_time_search["date_search"] = self.date_search
+        self.tee_time_search["time_search"] = self.time_search
+        self.tee_time_search["course_search"] = self.course_search
+        self.tee_time_search["players_search"] = self.players_search
+        self.tee_time_search["hole_search"] = self.hole_search
+        self.tee_time_search["tee_times"] = self.tee_times
+
     def process_tee_times(self):
-        # code to clean and process the scraped tee times data
+        # clean up values?
         pass
 
     def save_to_csv(self, filename):
         # code to save processed data to CSV
         pass
+
+    def tee_time_summary_json(self):
+        return self.tee_time_search
+
 
     def quit(self):
         self.driver.quit()
