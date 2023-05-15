@@ -9,9 +9,9 @@ def run_scraper(date_search, data_queue):
     pgs = PremierGolfScraper(date_search=date_search, course_search="Jackson Park")
     html = pgs.navigate_page()
     pgs.scrape(html)
-    result = pgs.tee_time_summary_json()
+    results = pgs.get_tee_time_search_results()
+    pgs.save_to_json(results)
     pgs.quit()
-    data_queue.put(result)
 
 def get_dates_range(start_day: str = date.today(), end_day: str = date.today() + timedelta(14)) -> list:
     if start_day < date.today():
@@ -28,11 +28,12 @@ def get_dates_range(start_day: str = date.today(), end_day: str = date.today() +
     return dates_list
 
 if __name__ == "__main__":
-    start_day = date.today() + timedelta(days=1)
+    start_day = date.today()
     end_day = start_day + timedelta(days=2)
     dates_list = get_dates_range(start_day, end_day)
 
-    data_queue = Queue()
+
+    # consider using threads instead of processes
 
     # create a list to hold the processes
     processes = []
@@ -48,10 +49,13 @@ if __name__ == "__main__":
         process.join()
 
     data_aggregator = DataAggregator()
+    # for file in files that I generated in sample directory
     for _ in range(len(dates_list)):
         data_aggregator.add_data(data_queue.get())
 
-    with open("./sample/test.json", "w") as outfile:
-        json.dump(data_aggregator.get_data(), outfile, indent=4)
+    # call data_aggregator.save_data()
 
 
+
+
+    # get setup with docker, devcontainer, codespace github, dotfiles, zsh4humans vs fish?

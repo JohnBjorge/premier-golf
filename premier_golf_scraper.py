@@ -11,6 +11,8 @@ from bs4 import BeautifulSoup
 
 from datetime import datetime
 
+import json
+
 
 class PremierGolfScraper:
     def __init__(
@@ -22,6 +24,8 @@ class PremierGolfScraper:
         players_search: str = "Any",
         hole_search: str = "18 Holes",
     ) -> None:
+        
+        # move to function that kicks things off see comment below and learn about @property decorator
         self.url = url
         self.driver = webdriver.Chrome(
             service=ChromeService(ChromeDriverManager().install())
@@ -35,8 +39,15 @@ class PremierGolfScraper:
         self.players_search = players_search  # not being used
         self.hole_search = hole_search
         self.scrape_time = None
+
+        # move these to functions instead
         self.tee_times = []
-        self.tee_time_search = {}
+
+    # @property
+    # def driver():
+    #     if self._driver is None:
+    #         self._driver = ...
+    #     return self._driver
 
     def navigate_page(self) -> str:
         # select date
@@ -105,6 +116,7 @@ class PremierGolfScraper:
 
         return self.driver.page_source  # html
 
+    # consider parsing by selecting all text content and then regex matching results
     def scrape(self, html: str) -> list:
         soup = BeautifulSoup(html, "html.parser")
 
@@ -145,8 +157,6 @@ class PremierGolfScraper:
 
         self.tee_times = tee_time_list
 
-        self.tee_time_search_summary()
-
 
 # {
 #     tee_times: [
@@ -162,25 +172,28 @@ class PremierGolfScraper:
 #         },
 #     ]
 # }
-    def tee_time_search_summary(self):
-        self.tee_time_search["scrape_time"] = self.scrape_time
-        self.tee_time_search["date_search"] = self.date_search
-        self.tee_time_search["time_search"] = self.time_search
-        self.tee_time_search["course_search"] = self.course_search
-        self.tee_time_search["players_search"] = self.players_search
-        self.tee_time_search["hole_search"] = self.hole_search
-        self.tee_time_search["tee_times"] = self.tee_times
+    def get_tee_time_search_results(self):
+        tee_time_search_results = {}
+        tee_time_search_results["scrape_time"] = self.scrape_time
+        tee_time_search_results["date_search"] = self.date_search
+        tee_time_search_results["time_search"] = self.time_search
+        tee_time_search_results["course_search"] = self.course_search
+        tee_time_search_results["players_search"] = self.players_search
+        tee_time_search_results["hole_search"] = self.hole_search
+        tee_time_search_results["tee_times"] = self.tee_times
+        return tee_time_search_results
 
     def process_tee_times(self):
         # clean up values?
         pass
 
-    def save_to_csv(self, filename):
-        # code to save processed data to CSV
-        pass
+    def save_to_json(self, results):
+        date_formatted = self.scrape_time.strftime("%Y%m%d")
+        time_formatted = self.scrape_time.strftime("%H%M%S")
+        filename = self.scrape_time.strftime("%Y%m%d%H%M%S")
 
-    def tee_time_summary_json(self):
-        return self.tee_time_search
+        with open(f"./sample/scraper/{date_formatted}/{time_formatted}/{filename}.json", "w") as outfile:
+            json.dump(results, outfile, indent=4)
 
 
     def quit(self):
