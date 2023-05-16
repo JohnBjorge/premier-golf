@@ -123,7 +123,7 @@ class PremierGolfScraper:
 
         return self.driver.page_source  # html
 
-    # consider parsing by selecting all text content and then regex matching results
+    # todo: consider parsing by selecting all text content and then regex matching results
     def scrape(self, html: str) -> list:
         soup = BeautifulSoup(html, "html.parser")
 
