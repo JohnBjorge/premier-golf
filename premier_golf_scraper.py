@@ -9,7 +9,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from bs4 import BeautifulSoup
 
-from datetime import datetime
+from datetime import datetime, date
 
 import json
 
@@ -17,22 +17,16 @@ import json
 class PremierGolfScraper:
     def __init__(
         self,
-        url: str = "https://premier.cps.golf/PremierV3",
-        date_search: str = datetime.today(),
+        date_search: date = datetime.today(),
         time_search: str = "AnyTime",
         course_search: list = ["Select All"],
         players_search: str = "Any",
         hole_search: str = "18 Holes",
     ) -> None:
-        
-        # move to function that kicks things off see comment below and learn about @property decorator
-        self.url = url
-        self.driver = webdriver.Chrome(
-            service=ChromeService(ChromeDriverManager().install())
-        )
-        self.driver.get(url)
+                
+        self.__url = None
+        self.__driver = None
 
-        date_search = date_search.strftime("%m/%d/%Y")
         self.date_search = date_search
         self.time_search = time_search  # not being used
         self.course_search = course_search
@@ -40,14 +34,25 @@ class PremierGolfScraper:
         self.hole_search = hole_search
         self.scrape_time = None
 
-        # move these to functions instead
-        self.tee_times = []
 
-    # @property
-    # def driver():
-    #     if self._driver is None:
-    #         self._driver = ...
-    #     return self._driver
+    @property
+    def url(self):
+        if self.__url is None:
+            self.__url = "https://premier.cps.golf/PremierV3"
+        return self.__url
+
+    @property
+    def driver(self):
+        if self.__driver is None:
+            self.__driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+        return self.__driver
+    
+    @property
+    def date_search_str(self):
+        return self.date_search.strftime("%m/%d/%Y")
+
+    def start_driver(self):
+        self.driver.get(self._url)
 
     def navigate_page(self) -> str:
         # select date
@@ -56,7 +61,7 @@ class PremierGolfScraper:
             "arguments[0].removeAttribute('readonly');", date_box
         )
         date_box.clear()
-        date_box.send_keys(self.date_search)
+        date_box.send_keys(self.date_search_str())
         date_box.send_keys(Keys.ENTER)
 
         # select courses
@@ -155,7 +160,7 @@ class PremierGolfScraper:
 
             tee_time_list.append(tee_time_dict)
 
-        self.tee_times = tee_time_list
+        return tee_time_list
 
 
 # {
@@ -172,15 +177,15 @@ class PremierGolfScraper:
 #         },
 #     ]
 # }
-    def get_tee_time_search_results(self):
+    def get_tee_time_search_results(self, tee_time_list):
         tee_time_search_results = {}
         tee_time_search_results["scrape_time"] = self.scrape_time
-        tee_time_search_results["date_search"] = self.date_search
+        tee_time_search_results["date_search"] = self.date_search_str()
         tee_time_search_results["time_search"] = self.time_search
         tee_time_search_results["course_search"] = self.course_search
         tee_time_search_results["players_search"] = self.players_search
         tee_time_search_results["hole_search"] = self.hole_search
-        tee_time_search_results["tee_times"] = self.tee_times
+        tee_time_search_results["tee_times"] = tee_time_list
         return tee_time_search_results
 
     def process_tee_times(self):
