@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, date
 
 import json
+import os
 
 
 class PremierGolfScraper:
@@ -32,6 +33,7 @@ class PremierGolfScraper:
         self.course_search = course_search
         self.players_search = players_search  # not being used
         self.hole_search = hole_search
+
         self.scrape_time = None
 
 
@@ -52,7 +54,7 @@ class PremierGolfScraper:
         return self.date_search.strftime("%m/%d/%Y")
 
     def start_driver(self):
-        self.driver.get(self._url)
+        self.driver.get(self.url)
 
     def navigate_page(self) -> str:
         # select date
@@ -61,7 +63,7 @@ class PremierGolfScraper:
             "arguments[0].removeAttribute('readonly');", date_box
         )
         date_box.clear()
-        date_box.send_keys(self.date_search_str())
+        date_box.send_keys(self.date_search_str)
         date_box.send_keys(Keys.ENTER)
 
         # select courses
@@ -89,7 +91,7 @@ class PremierGolfScraper:
         submit_button = self.driver.find_element(By.ID, "btnSubmit")
         submit_button.click()
 
-        time_now = datetime.now().strftime('%m/%d/%Y %H:%M:%S')
+        time_now = datetime.now()
         self.scrape_time = time_now
 
         # wait for search results
@@ -179,8 +181,8 @@ class PremierGolfScraper:
 # }
     def get_tee_time_search_results(self, tee_time_list):
         tee_time_search_results = {}
-        tee_time_search_results["scrape_time"] = self.scrape_time
-        tee_time_search_results["date_search"] = self.date_search_str()
+        tee_time_search_results["scrape_time"] = self.scrape_time.strftime("%Y%m%d%H%M%S")
+        tee_time_search_results["date_search"] = self.date_search_str
         tee_time_search_results["time_search"] = self.time_search
         tee_time_search_results["course_search"] = self.course_search
         tee_time_search_results["players_search"] = self.players_search
@@ -195,9 +197,12 @@ class PremierGolfScraper:
     def save_to_json(self, results):
         date_formatted = self.scrape_time.strftime("%Y%m%d")
         time_formatted = self.scrape_time.strftime("%H%M%S")
-        filename = self.scrape_time.strftime("%Y%m%d%H%M%S")
+        file_name = self.scrape_time.strftime("%Y%m%d%H%M%S")
 
-        with open(f"./sample/scraper/{date_formatted}/{time_formatted}/{filename}.json", "w") as outfile:
+        file_path = f"./sample/scraper/{date_formatted}/{time_formatted}/"
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+
+        with open(f"{file_path}/{file_name}.json", "w") as outfile:
             json.dump(results, outfile, indent=4)
 
 
