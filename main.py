@@ -17,21 +17,17 @@ def run_scraper(date_search):
 
 if __name__ == "__main__":
     start_date = date.today()
-    number_of_days = 3
+    number_of_days = 2
     dates_list = [start_date + timedelta(days=i) for i in range(number_of_days)]
 
     max_workers = 6
-    # Create a thread pool executor with the desired maximum number of threads
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
         for day in dates_list:
             executor.submit(run_scraper, day)
 
     data_aggregator = DataAggregator()
-    # todo: for file in files that I generated in sample directory, need to fix file structure in scraper class
-    for _ in range(len(dates_list)):
-        pass
-        # data_aggregator.add_data(data_queue.get())
-
-    # call data_aggregator.save_data()
+    data_aggregator.aggregate_data()
+    data_aggregator.save_data()
+    data_aggregator.archive_data()
 
     # get setup with docker, devcontainer, codespace github, dotfiles, zsh4humans vs fish?

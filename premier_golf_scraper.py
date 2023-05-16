@@ -199,6 +199,7 @@ class PremierGolfScraper:
         time_formatted = self.scrape_time.strftime("%H%M%S")
         file_name = self.scrape_time.strftime("%Y%m%d%H%M%S")
 
+        # todo: make file path a class variable?
         file_path = f"./sample/scraper/{date_formatted}/{time_formatted}/"
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
