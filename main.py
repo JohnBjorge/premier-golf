@@ -3,6 +3,7 @@ from datetime import datetime, date, timedelta
 from multiprocessing import Process, Pool, Queue, Manager, Lock, freeze_support
 import json
 from data_aggregator import DataAggregator
+import concurrent.futures
 
 
 def run_scraper(date_search):
@@ -14,42 +15,23 @@ def run_scraper(date_search):
     pgs.save_to_json(results)
     pgs.quit()
 
-def get_dates_range(start_day: date = date.today(), end_day: date = date.today() + timedelta(14)) -> list:
-    dates_list = []
-    day_range = end_day - start_day
-    for day in range(day_range.days):
-        dates_list.append(start_day + timedelta(days=day))
-    return dates_list
-
 if __name__ == "__main__":
-    start_day = date.today()
-    end_day = start_day + timedelta(days=2)
-    dates_list = get_dates_range(start_day, end_day)
+    start_date = date.today()
+    number_of_days = 3
+    dates_list = [start_date + timedelta(days=i) for i in range(number_of_days)]
 
-    # consider using threads instead of processes
-
-    # create a list to hold the processes
-    processes = []
-
-    # start a new process for each URL
-    for day in dates_list:
-        process = Process(target=run_scraper, args=(day,))
-        process.start()
-        processes.append(process)
-
-    # wait for all processes to complete
-    for process in processes:
-        process.join()
+    max_workers = 6
+    # Create a thread pool executor with the desired maximum number of threads
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        for day in dates_list:
+            executor.submit(run_scraper, day)
 
     data_aggregator = DataAggregator()
-    # for file in files that I generated in sample directory
+    # todo: for file in files that I generated in sample directory, need to fix file structure in scraper class
     for _ in range(len(dates_list)):
-        print("es")
+        pass
         # data_aggregator.add_data(data_queue.get())
 
     # call data_aggregator.save_data()
-
-
-
 
     # get setup with docker, devcontainer, codespace github, dotfiles, zsh4humans vs fish?
