@@ -17,7 +17,7 @@ def run_scraper(date_search):
 
 if __name__ == "__main__":
     start_date = date.today()
-    number_of_days = 2
+    number_of_days = 1
     dates_list = [start_date + timedelta(days=i) for i in range(number_of_days)]
 
     max_workers = 6

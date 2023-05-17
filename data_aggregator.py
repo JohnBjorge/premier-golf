@@ -48,8 +48,15 @@ class DataAggregator:
         source_directory = "./sample/scraper"
         destination_directory = "./sample/archive/scraper"
 
-        # todo: bug here in archival for consecutive runs
-        for filename in os.listdir(source_directory):
-            source_path = os.path.join(source_directory, filename)
-            destination_path = os.path.join(destination_directory, filename)
-            shutil.move(source_path, destination_path)
+        for root, dirs, files in os.walk(source_directory):
+            for filename in files:
+                source_path = os.path.join(root, filename)
+                relative_path = os.path.relpath(source_path, source_directory)
+                destination_path = os.path.join(destination_directory, relative_path)
+                
+                if os.path.exists(destination_path):
+                    # If the destination path already exists, use the destination directory
+                    destination_path = os.path.join(destination_path, filename)
+                
+                # Copy the file to the destination path
+                shutil.copy2(source_path, destination_path)
