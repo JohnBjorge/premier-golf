@@ -59,4 +59,4 @@ class DataAggregator:
                     destination_path = os.path.join(destination_path, filename)
                 
                 # Copy the file to the destination path
-                shutil.copy2(source_path, destination_path)
+                shutil.move(source_path, destination_path)
