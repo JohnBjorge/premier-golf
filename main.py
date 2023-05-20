@@ -28,6 +28,6 @@ if __name__ == "__main__":
     data_aggregator = DataAggregator()
     data_aggregator.aggregate_data()
     data_aggregator.save_data()
-    data_aggregator.archive_data()
+    data_aggregator.upload_to_google()
 
     # get setup with docker, devcontainer, codespace github, dotfiles, zsh4humans vs fish?

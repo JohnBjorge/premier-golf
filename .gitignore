@@ -2,5 +2,6 @@
 venv
 .vscode
 __pycache__
-sample
+data
 sandbox.py
+sample

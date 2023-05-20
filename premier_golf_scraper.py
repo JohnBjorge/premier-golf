@@ -199,7 +199,7 @@ class PremierGolfScraper:
         file_name = self.scrape_time.strftime("%Y%m%d%H%M%S")
 
         # todo: make file path a class variable?
-        file_path = f"./sample/scraper/{date_formatted}/"
+        file_path = f"./data/scraper/{date_formatted}/"
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
         with open(f"{file_path}/{file_name}.json", "w") as outfile:
