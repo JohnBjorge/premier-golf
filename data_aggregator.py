@@ -16,12 +16,10 @@ class DataAggregator:
     data
         aggregator
             date
-                mintimemaxtime
-                    scrapedatemintimemaxtime.json
+                mintimemaxtime.json
             archive
                 date
-                    mintimemaxtime
-                        scrapedatemintimemaxtime.json
+                    mintimemaxtime.json
         scraper
             date
                 scrapedatetime.json
