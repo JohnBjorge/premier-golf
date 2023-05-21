@@ -19,7 +19,8 @@ class DataAggregator:
                 mintimemaxtime.json
             archive
                 date
-                    mintimemaxtime.json
+                    mintimemaxtime
+                        mintimemaxtime.json
         scraper
             date
                 scrapedatetime.json
@@ -54,19 +55,21 @@ class DataAggregator:
 
     def save_data(self):
         date = self.load_date
-        time_range = "".join([self.min_load_time, self.max_load_time])
-        file_name = "".join([time_range])
+        time_range = "_".join([self.min_load_time, self.max_load_time])
 
         file_path = f"./data/aggregator/{date}/"
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-        with open(f"{file_path}/{file_name}.json", "w") as outfile:
+        with open(f"{file_path}/{time_range}.json", "w") as outfile:
             json.dump(self.data, outfile, indent=4)
 
         #archive scraper data if agg successful
         self.archive_data(source_directory="./data/scraper", destination_directory="./data/scraper/archive")
         
     def archive_data(self, source_directory, destination_directory):
+        time_range = "_".join([self.min_load_time, self.max_load_time])
+        destination_directory = "/".join([destination_directory, self.load_date, time_range])
+
         for item in os.listdir(source_directory):
             if item != "archive":
                 item_path = os.path.join(source_directory, item)
