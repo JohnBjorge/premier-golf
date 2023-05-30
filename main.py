@@ -45,7 +45,6 @@ if __name__ == "__main__":
     number_of_days = 2
 
     dates_list = [start_date + timedelta(days=i) for i in range(number_of_days)]
-
     max_workers = 6
     scrape_to_gcs(dates_list, max_workers)
 

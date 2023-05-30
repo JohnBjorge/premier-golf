@@ -43,11 +43,65 @@ class PremierGolfScraper:
             self.__url = "https://premier.cps.golf/PremierV3"
         return self.__url
 
+    # @property
+    # def driver(self):
+    #     if self.__driver is None:
+    #         self.__driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+    #     return self.__driver
+
     @property
     def driver(self):
+        path_to_chromedriver = '/usr/bin/chromedriver'
+
         if self.__driver is None:
-            self.__driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()))
+            options = webdriver.ChromeOptions()
+            # run in 'headless' mode
+            options.add_argument('--headless')
+            # allow to run as 'root' user
+            options.add_argument("--no-sandbox")
+            # disabling extensions
+            options.add_argument("--disable-extensions")
+            # applicable to windows os only
+            options.add_argument("--disable-gpu")
+            # overcome limited resource problems
+            options.add_argument("--disable-dev-shm-usage")
+
+            self.__driver = webdriver.Chrome(
+                executable_path=path_to_chromedriver,
+                options=options
+            )
+            # assert isinstance(driver, RemoteWebDriver)
+            # get_logger().info(f"Selenium service_url: {svc.service_url}")
         return self.__driver
+
+    # def initialize_browser(
+    #         path_to_chromedriver: T.Union[str, Parameter]
+    # ):
+    #     options = webdriver.ChromeOptions()
+    #     # run in 'headless' mode
+    #     options.add_argument('--headless')
+    #     # allow to run as 'root' user
+    #     options.add_argument("--no-sandbox")
+    #     # disabling extensions
+    #     options.add_argument("--disable-extensions")
+    #     # applicable to windows os only
+    #     options.add_argument("--disable-gpu")
+    #     # overcome limited resource problems
+    #     options.add_argument("--disable-dev-shm-usage")
+    #     # specify download directory
+    #     # options.add_experimental_option(
+    #     #     'prefs',
+    #     #     {
+    #     #         'download.default_directory': tempfile.gettempdir()
+    #     #     }
+    #     # )
+    #     driver = webdriver.Chrome(
+    #         executable_path=path_to_chromedriver,
+    #         options=options
+    #     )
+    #     assert isinstance(driver, RemoteWebDriver)
+    #     # get_logger().info(f"Selenium service_url: {svc.service_url}")
+    #     return driver
     
     @property
     def date_search_str(self):

@@ -1,6 +1,8 @@
 import json
+from pathlib import Path
 import shutil
 import os
+from prefect_gcp.cloud_storage import GcsBucket
 
 class DataAggregator:
     def __init__(self):
@@ -9,6 +11,7 @@ class DataAggregator:
         self.load_date = None
         self.min_load_time = None
         self.max_load_time = None
+        self.agg_file_path = None
 
 
     # change directory structure to the following:
@@ -60,7 +63,8 @@ class DataAggregator:
         file_path = f"./data/aggregator/{date}/"
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-        with open(f"{file_path}/{time_range}.json", "w") as outfile:
+        self.agg_file_path = Path(f"{file_path}/{time_range}.json")
+        with open(self.agg_file_path, "w") as outfile:
             json.dump(self.data, outfile, indent=4)
 
         #archive scraper data if agg successful
@@ -79,6 +83,8 @@ class DataAggregator:
     def upload_to_google(self):
         # upload agg to google 
             # do it
+        gcs_block = GcsBucket.load("golf-scraper-gcs")
+        gcs_block.upload_from_path(from_path=self.agg_file_path, to_path=self.agg_file_path)
 
         # archive agg data if upload successful
         self.archive_data(source_directory="./data/aggregator", destination_directory="./data/aggregator/archive")
