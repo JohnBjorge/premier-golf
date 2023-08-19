@@ -1,0 +1,12 @@
+dagster
+dagster-cloud
+boto3
+pandas
+matplotlib
+textblob
+tweepy
+wordcloud
+
+[dev]
+dagit
+pytest

@@ -1,0 +1,12 @@
+[32m2023-08-19 14:48:11 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88398 - LOGS_CAPTURED - Started capturing logs in process (pid: 88398).
+[32m2023-08-19 14:48:11 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88398 - threaded_scrape - STEP_START - Started execution of step "threaded_scrape".
+[32m2023-08-19 14:48:11 -0700[0m - dagster - [34mINFO[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - threaded_scrape - Scraping 2 days with 12 workers.
+14:48:11.864 | [36mINFO[0m    | dagster.builtin - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - threaded_scrape - Scraping 2 days with 12 workers.
+[32m2023-08-19 14:48:33 -0700[0m - dagster - [34mINFO[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - threaded_scrape - Scraped 13 tee times.
+14:48:33.055 | [36mINFO[0m    | dagster.builtin - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - threaded_scrape - Scraped 13 tee times.
+[32m2023-08-19 14:48:33 -0700[0m - dagster - [34mINFO[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - threaded_scrape - Scraped 14 tee times.
+14:48:33.771 | [36mINFO[0m    | dagster.builtin - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - threaded_scrape - Scraped 14 tee times.
+[32m2023-08-19 14:48:33 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88398 - threaded_scrape - STEP_OUTPUT - Yielded output "result" of type "Nothing". (Type check passed).
+[32m2023-08-19 14:48:33 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88398 - threaded_scrape - ASSET_MATERIALIZATION - Materialized value threaded_scrape.
+[32m2023-08-19 14:48:33 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88398 - threaded_scrape - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2023-08-19 14:48:33 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88398 - threaded_scrape - STEP_SUCCESS - Finished execution of step "threaded_scrape" in 22.11s.

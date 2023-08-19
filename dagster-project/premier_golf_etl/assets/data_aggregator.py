@@ -83,8 +83,8 @@ class DataAggregator:
     def upload_to_google(self):
         # upload agg to google 
             # do it
-        gcs_block = GcsBucket.load("golf-scraper-gcs")
-        gcs_block.upload_from_path(from_path=self.agg_file_path, to_path=self.agg_file_path)
+        # gcs_block = GcsBucket.load("golf-scraper-gcs")
+        # gcs_block.upload_from_path(from_path=self.agg_file_path, to_path=self.agg_file_path)
 
         # archive agg data if upload successful
         self.archive_data(source_directory="./data/aggregator", destination_directory="./data/aggregator/archive")

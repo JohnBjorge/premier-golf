@@ -1,0 +1,12 @@
+README.md
+pyproject.toml
+setup.cfg
+setup.py
+premier_golf_etl/__init__.py
+premier_golf_etl.egg-info/PKG-INFO
+premier_golf_etl.egg-info/SOURCES.txt
+premier_golf_etl.egg-info/dependency_links.txt
+premier_golf_etl.egg-info/requires.txt
+premier_golf_etl.egg-info/top_level.txt
+premier_golf_etl/assets/__init__.py
+premier_golf_etl/assets/main.py

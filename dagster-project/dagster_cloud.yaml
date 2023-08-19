@@ -1,0 +1,4 @@
+locations:
+  - location_name: premier_golf_etl
+    code_source:
+      package_name: premier_golf_etl
