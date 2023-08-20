@@ -1,7 +1,0 @@
-[32m2023-08-19 14:48:40 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88500 - LOGS_CAPTURED - Started capturing logs in process (pid: 88500).
-[32m2023-08-19 14:48:40 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88500 - aggregate_data - STEP_START - Started execution of step "aggregate_data".
-[32m2023-08-19 14:48:41 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88500 - aggregate_data - STEP_OUTPUT - Yielded output "result" of type "DataAggregator". (Type check passed).
-[32m2023-08-19 14:48:41 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - aggregate_data - Writing file at: /Users/John/VSCode/premier-golf/dagster-project/tmpwfr0l6h5/storage/aggregate_data
-[32m2023-08-19 14:48:41 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88500 - aggregate_data - ASSET_MATERIALIZATION - Materialized value aggregate_data.
-[32m2023-08-19 14:48:41 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88500 - aggregate_data - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
-[32m2023-08-19 14:48:41 -0700[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - d4ee6bed-248b-458a-b3c6-6632da3175b8 - 88500 - aggregate_data - STEP_SUCCESS - Finished execution of step "aggregate_data" in 85ms.
