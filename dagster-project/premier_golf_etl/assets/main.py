@@ -16,17 +16,40 @@ import concurrent.futures
 logger = get_dagster_logger()
 
 @asset(group_name="golf", compute_kind="scraper")
-def threaded_scrape() -> None:
+def threaded_scrape(context: AssetExecutionContext) -> None:
     start_date = date.today()
     number_of_days = 2
 
     dates_list = [start_date + timedelta(days=i) for i in range(number_of_days)]
     max_workers = 12
 
-    logger.info(f"Scraping {number_of_days} days with {max_workers} workers.")
+    logger.info(f"Scraping {number_of_days} days ({dates_list}) with maximum of {max_workers} workers.")
+    # with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+    #     for day in dates_list:
+    #         test = executor.submit(run_scraper, day)
+    #         logger.info(f"test: {test}")
+
+
+    results = []
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        for day in dates_list:
-            executor.submit(run_scraper, day)
+        future_day_scraper = {executor.submit(run_scraper, day): day for day in dates_list}
+        
+        for future in concurrent.futures.as_completed(future_day_scraper):
+            day = future_day_scraper[future]
+            day_formatted = day.strftime("%Y%m%d")
+            try:
+                result = future.result()  # This blocks until the future is complete
+                results.append((day_formatted, result))
+            except Exception as e:
+                print(f"Error occurred for day {day_formatted}: {e}")
+    
+    context.add_output_metadata(
+        metadata={
+            "sample output": result,
+            "total output": results
+        }
+    )
 
 def run_scraper(date_search: date) -> None:
     pgs = PremierGolfScraper(date_search=date_search, course_search="Jackson Park")
@@ -34,19 +57,20 @@ def run_scraper(date_search: date) -> None:
     html = pgs.navigate_page()
     tee_times = pgs.scrape(html)
     results = pgs.get_tee_time_search_results(tee_times)
-    logger.info(f"Scraped {len(tee_times)} tee times.")
+    logger.info(f"Scraped {len(tee_times)} tee times for {date_search}")
     pgs.save_to_json(results)
     pgs.quit()
+    return results
+
 
 @asset(group_name="golf", compute_kind="aggregator", non_argument_deps={"threaded_scrape"})
-def aggregate_data(context) -> DataAggregator:
+def aggregate_data(context: AssetExecutionContext) -> DataAggregator:
     data_aggregator = DataAggregator()
     data_aggregator.aggregate_data()
     data_aggregator.save_data()
     context.add_output_metadata(
         {
             "filepath": data_aggregator.agg_file_path,
-            # "preview": MetadataValue.md(df.head().to_markdown()),
         }
     )
     return data_aggregator
@@ -57,8 +81,29 @@ def upload_to_gcs(
     ) -> None:
     aggregate_data.upload_to_google()
 
+    context.add_output_metadata(
+        {
+            "filepath": aggregate_data.agg_file_path,
+        }
+    )
 
 
+# PLAN todo
+# Follow tutorial: https://docs.dagster.io/tutorial/building-an-asset-graph
+# Add metadata so easier to see what's happening
+# Schedule / create pipeline in init file
+# Change to using io manager rather than writing files around
+# Should make it easier to switch to using google cloud storage (toggle for local/production)
+
+# Figure out pipeline step to take json files in GCS into raw table(s) in big query 
+# Figure out how to deploy to compute engine (docker or devcontainer or manual deploy)
+# Polish up process, code, etc, make it robust
+
+# get setup with dbt to handle transformation steps of data
+# incorporate dbt into pipeline
+# When dbt transformations are good into prod table data model then figure out looker
+
+# once accumulated lots of data consider ML stuff
 
 
 

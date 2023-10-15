@@ -34,6 +34,12 @@ class DataAggregator:
 
     """
 
+    def get_load_date_parts(self):
+        year = self.load_date[:4]
+        month = self.load_date[4:6]
+        day = self.load_date[6:]
+        return year, month, day
+
     # read json from directory and build tee times dictionary
     def aggregate_data(self):
 
@@ -81,10 +87,25 @@ class DataAggregator:
                     shutil.move(item_path, destination_directory)
 
     def upload_to_google(self):
-        # upload agg to google 
-            # do it
-        # gcs_block = GcsBucket.load("golf-scraper-gcs")
-        # gcs_block.upload_from_path(from_path=self.agg_file_path, to_path=self.agg_file_path)
+        # # Initialize a client to interact with Google Cloud Storage
+        # storage_client = storage.Client()
+
+        # # Get the bucket where you want to upload the JSON file
+        # bucket = storage_client.bucket(bucket_name)
+
+        # # Specify the name for the destination blob (object) in GCS
+        # blob = bucket.blob(destination_blob_name)
+
+        # # Upload the JSON file to GCS
+        # blob.upload_from_filename(json_file_path)
+
+        # # Example usage
+        # json_file_path = '/path/to/your/jsonfile.json'
+        # bucket_name = 'your-gcs-bucket-name'
+        # destination_blob_name = 'destination/folder/your-jsonfile.json'
+
+        # upload_to_gcs(json_file_path, bucket_name, destination_blob_name)
+
 
         # archive agg data if upload successful
         self.archive_data(source_directory="./data/aggregator", destination_directory="./data/aggregator/archive")

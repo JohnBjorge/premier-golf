@@ -14,6 +14,9 @@ from datetime import datetime, date
 import json
 import os
 
+from dagster import get_dagster_logger
+
+logger = get_dagster_logger()
 
 class PremierGolfScraper:
     def __init__(
@@ -51,7 +54,8 @@ class PremierGolfScraper:
 
     @property
     def driver(self):
-        path_to_chromedriver = '/usr/bin/chromedriver'
+
+        path_to_chromedriver = '/usr/local/bin/chromedriver'
 
         if self.__driver is None:
             options = webdriver.ChromeOptions()
@@ -66,10 +70,14 @@ class PremierGolfScraper:
             # overcome limited resource problems
             options.add_argument("--disable-dev-shm-usage")
 
-            self.__driver = webdriver.Chrome(
-                executable_path=path_to_chromedriver,
-                options=options
-            )
+            self.__driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+
+            # not sure why this stopped working, switched to above line that installs everytime and works
+            # self.__driver = webdriver.Chrome(
+            #     executable_path=path_to_chromedriver,
+            #     options=options
+            # )
+
             # assert isinstance(driver, RemoteWebDriver)
             # get_logger().info(f"Selenium service_url: {svc.service_url}")
         return self.__driver
@@ -215,7 +223,6 @@ class PremierGolfScraper:
             tee_time_dict["player_slots"] = player_slots
 
             tee_time_list.append(tee_time_dict)
-
         return tee_time_list
 
 
